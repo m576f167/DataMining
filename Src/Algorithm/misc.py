@@ -63,7 +63,7 @@ def upperApproximation(df, concept):
     df: pandas.DataFrame
         Data frame representation of the dataset
     concept: String or Numerical
-        Concept value for lower approximation. It can be String or Numerical, based
+        Concept value for upper approximation. It can be String or Numerical, based
         on the decision data type
 
     Returns
