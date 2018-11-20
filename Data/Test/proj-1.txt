@@ -1,0 +1,8 @@
+< a a a d >
+[ Weight Noise Comfort Quality ]
+5.2 low low low
+5.2 low high high
+5.2 medium high low
+4.0 low high high
+4.0 low high high
+1.8 medium high high
