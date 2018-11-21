@@ -90,8 +90,8 @@ def run(input_file, output_file):
             print("|========================================|")
             print(" [#] Computing Rule Info")
             rules_info = [computeRuleInfo(rule, decision_concept) for rule in rules]
-            rule_set_normal[(decision_colname, concept)] = rules
-            rule_info_normal[(decision_colname, concept)] = rules_info
+            rule_set_normal["({}, {})".format(decision_colname, concept)] = rules
+            rule_info_normal["({}, {})".format(decision_colname, concept)] = rules_info
         else:
             # Certain Rule Set
             print("|++++++++++++++++++++++++++++++++++++++++|")
@@ -103,8 +103,8 @@ def run(input_file, output_file):
             print("|========================================|")
             print(" [#] Computing Rule Info")
             rules_info = [computeRuleInfo(rule, original_decision_concept) for rule in rules]
-            rule_set_certain[(decision_colname, concept)] = rules
-            rule_info_certain[(decision_colname, concept)] = rules_info
+            rule_set_certain["({}, {})".format(decision_colname, concept)] = rules
+            rule_info_certain["({}, {})".format(decision_colname, concept)] = rules_info
             df[decision_colname] = original_decision
 
             # Possible Rule Set
@@ -117,8 +117,8 @@ def run(input_file, output_file):
             print("|========================================|")
             print(" [#] Computing Rule Info")
             rules_info = [computeRuleInfo(rule, original_decision_concept) for rule in rules]
-            rule_set_possible[(decision_colname, concept)] = rules
-            rule_info_possible[(decision_colname, concept)] = rules_info
+            rule_set_possible["({}, {})".format(decision_colname, concept)] = rules
+            rule_info_possible["({}, {})".format(decision_colname, concept)] = rules_info
             df[decision_colname] = original_decision
     print("|[][][][][][][][][][][][][][][][][][][][]|")
     print("|[][][][][][][][][][][][][][][][][][][][]|")
