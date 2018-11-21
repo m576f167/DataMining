@@ -35,7 +35,6 @@ class ParseState(Enum):
     COMMENT = 4
     END = 5
 
-
 def parseInput(input_file):
     """
     Parse LERS format input file
@@ -55,6 +54,7 @@ def parseInput(input_file):
     """
     file_handler_input = open(input_file, "r")
     read_lines = file_handler_input.readlines()
+    file_handler_input.close()
     current_state = ParseState.START
     prev_state = current_state
     current_data = []
@@ -122,3 +122,44 @@ def parseInput(input_file):
 
     df = df.reset_index(drop = True)
     return (df)
+
+def outputRuleSet(output_file, rule_set, rule_info, is_rewrite = True):
+    """
+    Write rule set to output file
+
+    This function writes the rule set to specified output file. The rule_set has
+    the format specified in parameter section.
+
+    Parameters
+    ----------
+    output_file: String
+        Output file name and path
+    rule_set: dict
+        A dictionary representing the rule set with the following format:
+            {(decision_column_name, decision_value) : rules}
+    rule_info: dict
+        A dictionary representing the rule info for the rule set with the following
+        format:
+            {(decision_column_name, decision_value) : [(x, y, z), (x, y, z), ...]}
+        with the x = specificity, y = strength, z = total number of matching cases
+    is_rewrite: bool
+        Whether to rewrite the file or not
+
+    Returns
+    -------
+    """
+    file_handler_output = open(output_file + ".r", "w") if is_rewrite else open(output_file + ".r", "a")
+    for concept, rules in rule_set.items():
+        infos = rule_info[concept]
+        for rule_index, rule in enumerate(rules):
+            info = infos[rule_index]
+            rule_info_string = str(info[0]) + ", " + str(info[1]) + ", " + str(info[2]) + "\n"
+            conditions = list(rule.keys())
+            rule_string = conditions[0]
+            for i in range(1, len(conditions)):
+                rule_string = rule_string + " & " + conditions[i]
+            rule_string = rule_string + " -> " + concept + "\n"
+            file_handler_output.write(rule_info_string)
+            file_handler_output.write(rule_string)
+    file_handler_output.close()
+    return
