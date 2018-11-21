@@ -22,7 +22,6 @@
 import pandas as pd
 import numpy as np
 from misc import *
-from copy import deepcopy
 
 def generateDiscretizedValue(value, point_ranges, min_value, max_value):
     """
@@ -233,20 +232,18 @@ def dominantAttribute(df):
         while (i < total_element):
             if (total_cut_point <= 1):
                 break
-            tmp_chosen_cut_points = deepcopy(chosen_cut_points)
-            current_cut_point = tmp_chosen_cut_points[attribute][i]
-            tmp_chosen_cut_points[attribute] = np.delete(tmp_chosen_cut_points[attribute], i)
-            tmp_df = generateDiscretizedDataFrame(df, tmp_chosen_cut_points)
+            current_cut_point = chosen_cut_points[attribute].pop(i)
+            tmp_df = generateDiscretizedDataFrame(df, chosen_cut_points)
             consistency_level = levelOfConsistency(tmp_df)
             is_consistent = consistency_level == 1.0
             if (is_consistent):
-                # Keep current tmp_chosen_cut_points
-                chosen_cut_points = tmp_chosen_cut_points
+                # Current cut point is redundant
                 total_element = len(chosen_cut_points[attribute])
                 print(" = Dominant Attribute: Found redundant cut point = {} {}".format(attribute, str(current_cut_point)) )
                 total_cut_point -= 1
             else:
-                # Check next element
+                # Check next element, reinsert cutpoint
+                chosen_cut_points[attribute].insert(i, current_cut_point)
                 i += 1
 
     # Finalize cut points for all numerical attributes
