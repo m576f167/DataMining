@@ -47,21 +47,22 @@ def generateDiscretizedValue(value, point_ranges, min_value, max_value):
     str
         Discretize symbol representation of value
     """
+    str_format = "{:.2f}..{:.2f}"
     # No ranges
     if (len(point_ranges) == 0):
-        return ("{:.3f}..{:.3f}".format(min_value, max_value))
+        return (str_format.format(min_value, max_value))
 
     # Value is below all point_ranges
     if (value < point_ranges[0]):
-        return ("{:.3f}..{:.3f}".format(min_value, point_ranges[0]))
+        return (str_format.format(min_value, point_ranges[0]))
 
     # value is between point_ranges
     for i in range(1, len(point_ranges)):
         if (value < point_ranges[i]):
-            return("{:.3f}..{:.3f}".format(point_ranges[i - 1], point_ranges[i]))
+            return(str_format.format(point_ranges[i - 1], point_ranges[i]))
 
     # value is above all point_ranges
-    return ("{:.3f}..{:.3f}".format(point_ranges[len(point_ranges) - 1], max_value))
+    return (str_format.format(point_ranges[len(point_ranges) - 1], max_value))
 
 def generateDiscretizedDataFrame(df, chosen_cut_points):
     """
