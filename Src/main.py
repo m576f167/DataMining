@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 
 import sys, getopt
+import numpy as np
+from Algorithm.misc import *
+from Algorithm.dominant_attribute import *
+from Algorithm.LEM2 import *
+from Util.parser import *
 
 def runPipeline(df, concept, output_file):
     """
@@ -29,13 +34,19 @@ def runPipeline(df, concept, output_file):
     """
     attribute_colnames = df.columns[:-1]
     if (df[attribute_colnames].select_dtypes(include = "number").shape[1] > 0):
+        print("|========================================|")
+        print(" [#] Running Dominant Attribute Algorithm")
         df = dominantAttribute(df)
         # Print to file
         file_handler_output = open(output_file + ".disc", "w")
         file_handler_output.write("[ " + " ".join("{}".format(x) for x in df.columns) + " ]\n")
         file_handler_output.close()
         df.to_csv(output_file + ".disc", sep = " ", index = False, header = False, mode = "a")
+    print("|========================================|")
+    print(" [#] Running LEM2 Algorithm")
     rules, decision_concept = LEM2(df, concept)
+    print("|========================================|")
+    print(" [#] Running Dropping Condition Algorithm")
     rules = [droppingCondition(rule, decision_concept) for rule in rules]
     return (rules, decision_concept, df)
 
@@ -72,38 +83,61 @@ def run(input_file, output_file):
     for concept in concepts:
         if is_consistent:
             # Data set is consistent
+            print("|++++++++++++++++++++++++++++++++++++++++|")
+            print(" [@]=> Normal Rule Set for ({}, {})".format(decision_colname, concept))
+            print("|++++++++++++++++++++++++++++++++++++++++|")
             rules, decision_concept, df = runPipeline(df, concept, output_file)
+            print("|========================================|")
+            print(" [#] Computing Rule Info")
             rules_info = [computeRuleInfo(rule, decision_concept) for rule in rules]
             rule_set_normal[(decision_colname, concept)] = rules
             rule_info_normal[(decision_colname, concept)] = rules_info
         else:
             # Certain Rule Set
+            print("|++++++++++++++++++++++++++++++++++++++++|")
+            print(" [@]=> Certain Rule Set for ({}, {})".format(decision_colname, concept))
+            print("|++++++++++++++++++++++++++++++++++++++++|")
             df, original_decision = lowerApproximation(df, concept)
             rules, decision_concept, df = runPipeline(df, concept, output_file)
             original_decision_concept = np.where(original_decision == concept)[0]
+            print("|========================================|")
+            print(" [#] Computing Rule Info")
             rules_info = [computeRuleInfo(rule, original_decision_concept) for rule in rules]
             rule_set_certain[(decision_colname, concept)] = rules
             rule_info_certain[(decision_colname, concept)] = rules_info
             df[decision_colname] = original_decision
 
             # Possible Rule Set
+            print("|++++++++++++++++++++++++++++++++++++++++|")
+            print(" [@]=> Possible Rule Set for ({}, {})".format(decision_colname, concept))
+            print("|++++++++++++++++++++++++++++++++++++++++|")
             df, original_decision = upperApproximation(df, concept)
             rules, decision_concept, df = runPipeline(df, concept, output_file)
             original_decision_concept = np.where(original_decision == concept)[0]
+            print("|========================================|")
+            print(" [#] Computing Rule Info")
             rules_info = [computeRuleInfo(rule, original_decision_concept) for rule in rules]
             rule_set_possible[(decision_colname, concept)] = rules
             rule_info_possible[(decision_colname, concept)] = rules_info
             df[decision_colname] = original_decision
+    print("|[][][][][][][][][][][][][][][][][][][][]|")
+    print("|[][][][][][][][][][][][][][][][][][][][]|")
     if is_consistent:
         # Write rule set normally
+        print("|========================================|")
+        print(" [#] Outputting Normal Rule Set")
         outputRuleSet(output_file, rule_set_normal, rule_info_normal)
     else:
         # Write certain rule set
+        print("|========================================|")
+        print(" [#] Outputting Certain Rule Set")
         file_handler_output = open(output_file + ".r", "w")
         file_handler_output.write("! Certain rule set\n")
         file_handler_output.close()
         outputRuleSet(output_file, rule_set_certain, rule_info_certain, is_rewrite = False)
         # Write possible rule set
+        print("|========================================|")
+        print(" [#] Outputting Possible Rule Set")
         file_handler_output = open(output_file + ".r", "a")
         file_handler_output.write("\n\n! Possible rule set\n")
         file_handler_output.close()
@@ -179,14 +213,7 @@ def main(argv):
         print("Error: Input file and output file must not be empty\n")
         sys.exit(-1)
 
-    # Run the program
-    try:
-        run(input_file, output_file)
-    except Exception as e:
-        print(e)
-
     is_running = True
-
     # Keep running the program if option is selected
     while is_running:
         try:

@@ -155,10 +155,10 @@ def outputRuleSet(output_file, rule_set, rule_info, is_rewrite = True):
             info = infos[rule_index]
             rule_info_string = str(info[0]) + ", " + str(info[1]) + ", " + str(info[2]) + "\n"
             conditions = list(rule.keys())
-            rule_string = conditions[0]
+            rule_string = str(conditions[0])
             for i in range(1, len(conditions)):
-                rule_string = rule_string + " & " + conditions[i]
-            rule_string = rule_string + " -> " + concept + "\n"
+                rule_string = rule_string + " & " + str(conditions[i])
+            rule_string = rule_string + " -> " + str(concept) + "\n"
             file_handler_output.write(rule_info_string)
             file_handler_output.write(rule_string)
     file_handler_output.close()

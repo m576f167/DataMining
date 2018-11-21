@@ -21,7 +21,7 @@
 
 import pandas as pd
 import numpy as np
-from misc import *
+from .misc import levelOfConsistency
 
 def generateDiscretizedValue(value, point_ranges, min_value, max_value):
     """
@@ -49,19 +49,19 @@ def generateDiscretizedValue(value, point_ranges, min_value, max_value):
     """
     # No ranges
     if (len(point_ranges) == 0):
-        return ("{:6.3f}..{:6.3f}".format(min_value, max_value))
+        return ("{:.3f}..{:.3f}".format(min_value, max_value))
 
     # Value is below all point_ranges
     if (value < point_ranges[0]):
-        return ("{:6.3f}..{:6.3f}".format(min_value, point_ranges[0]))
+        return ("{:.3f}..{:.3f}".format(min_value, point_ranges[0]))
 
     # value is between point_ranges
     for i in range(1, len(point_ranges)):
         if (value < point_ranges[i]):
-            return("{:6.3f}..{:6.3f}".format(point_ranges[i - 1], point_ranges[i]))
+            return("{:.3f}..{:.3f}".format(point_ranges[i - 1], point_ranges[i]))
 
     # value is above all point_ranges
-    return ("{:6.3f}..{:6.3f}".format(point_ranges[len(point_ranges) - 1], max_value))
+    return ("{:.3f}..{:.3f}".format(point_ranges[len(point_ranges) - 1], max_value))
 
 def generateDiscretizedDataFrame(df, chosen_cut_points):
     """
@@ -129,13 +129,6 @@ def computeConditionalEntropy(df, grouping_criteria):
             lambda x: np.sum(x)
         ).T.apply(lambda x: np.sum(x))
 
-#    conditional_entropy_each_group = df_grouped.apply(
-#        # Group the groups further by decision
-#        lambda group: group.groupby(group.columns[-1]).apply(
-#            lambda x: x.shape[0]
-#        )/group.shape[0]).groupby(level = 0).apply(
-#            lambda x: np.sum(x * np.log2(x))
-#        )
     if not (list(conditional_entropy_each_group.index) == list(dict(df_grouped.groups).keys())):
         print("Found")
 

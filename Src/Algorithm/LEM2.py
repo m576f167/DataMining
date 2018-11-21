@@ -49,6 +49,8 @@ def LEM2(df, concept):
     attribute_value_pairs = {}
     decision_concept = np.where(df[decision_colname] == concept)[0]
 
+    print("------------------------------------------")
+    print(" = LEM2: Generating attribut-value pairs")
     # Generate attribute-value pairs
     for attribute in attribute_colnames:
         df_grouped = df.groupby(attribute).indices
@@ -58,6 +60,8 @@ def LEM2(df, concept):
     goal = decision_concept
     local_covering = []
     num_goal = len(goal)
+    print("------------------------------------------")
+    print(" = LEM2: Finding Local Covering")
     while (num_goal > 0):
         selected_pairs = {}
         possible_pairs = {k:v for k, v in attribute_value_pairs.items() if np.isin(v, goal).any()}
@@ -96,6 +100,8 @@ def LEM2(df, concept):
         num_goal = len(goal)
     i = 0
     total_element = len(local_covering)
+    print("------------------------------------------")
+    print(" = LEM2: Finding Maximum Local Covering")
     while (i < total_element):
         selected_pairs = local_covering.pop(i)
         union_local_covering = reduce(np.union1d, [reduce(np.intersect1d, selected_pairs.values()) for selected_pairs in local_covering])
