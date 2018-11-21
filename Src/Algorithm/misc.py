@@ -117,3 +117,68 @@ def lowerApproximation(df, concept):
     # Replace uncertain cases and cases not matching to concet with "SPECIAL_DECISION"
     df.loc[subset_lower_approximation_na, decision_colname] = "SPECIAL_DECISION"
     return (df, original_decision)
+
+def droppingCondition(rule, decision_concept):
+    """
+    Linear dropping condition of the rule
+
+    This function performs linear dropping condition of the possible rule.
+    Note: This function needs to know what the concept is, so it should be supplied.
+    Since rule here is a dictionary and it only performs shallow copy, then we
+    should pay more attention in the case of using this function in parallel program
+    because any modification during the execution of this function will be reflected
+    in the original dictionary passed to the function.
+
+    Parameters
+    ----------
+    rule: dict
+        The possible rule to be checked with the attribute-value pairs as the key and
+        the elements as the dictionary value
+    decision_concept: np.array
+        List of elements in decision concept
+
+    Returns
+    -------
+    dict
+        The resulting rule after performing linear dropping condition
+    """
+    # Cannot drop any rule
+    if len(rule) <= 1:
+        return (rule)
+    list_conditions = list(rule.keys())
+    for condition in list_conditions:
+        elements = rule[condition]
+        del rule[condition]
+        if ((len(rule) == 0) or (not np.isin(reduce(np.intersect1d, rule.values()), decision_concept).all())):
+            rule[condition] = elements
+    return (rule)
+
+def computeRuleInfo(rule, decision_concept):
+    """
+    Compute info for the rule
+
+    This function computes necessary info for the rule. The information computed
+    are specificity, strength, and the total number of matching cases.
+
+    Parameters
+    ----------
+    rule: dict
+        The possible rule to be checked with the attribute-value pairs as the key and
+        the elements as the dictionary value
+    decision_concept: np.array
+        List of elements in decision concept
+
+    Returns
+    -------
+    int
+        The specificity
+    int
+        The strength
+    int
+        The total number of matching cases
+    """
+    specificity = len(rule)
+    matching_cases = reduce(np.intersect1d, rule.values())
+    strength = np.sum(np.isin(matching_cases, decision_concept))
+    num_matching_cases = len(matching_cases)
+    return (specificity, strength, num_matching_cases)
