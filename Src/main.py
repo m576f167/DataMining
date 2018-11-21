@@ -78,7 +78,7 @@ def run(input_file, output_file):
     rule_set_possible = {}
     rule_info_normal = {}
     rule_info_certain = {}
-    rule_info_normal = {}
+    rule_info_possible = {}
     is_consistent = consistency_level == 1.0
     for concept in concepts:
         if is_consistent:

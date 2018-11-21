@@ -201,10 +201,13 @@ def dominantAttribute(df):
 
         # Append best cut point of dominant attribute
         if (chosen_cut_points.get(dominant_attribute) is not None):
-            chosen_cut_points[dominant_attribute] = np.sort(np.append(chosen_cut_points[dominant_attribute], best_cut_point))
+            if (best_cut_point not in chosen_cut_points[dominant_attribute]):
+                chosen_cut_points[dominant_attribute].append(best_cut_point)
+                chosen_cut_points[dominant_attribute].sort()
+                total_cut_point += 1
         else:
-            chosen_cut_points[dominant_attribute] = np.array([best_cut_point])
-        total_cut_point += 1
+            chosen_cut_points[dominant_attribute] = [best_cut_point]
+            total_cut_point += 1
 
         # Generate tmp_df
         tmp_df = generateDiscretizedDataFrame(df, chosen_cut_points)
