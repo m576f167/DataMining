@@ -47,7 +47,7 @@ def generateDiscretizedValue(value, point_ranges, min_value, max_value):
     str
         Discretize symbol representation of value
     """
-    str_format = "{:.2f}..{:.2f}"
+    str_format = "{:.3f}..{:.3f}"
     # No ranges
     if (len(point_ranges) == 0):
         return (str_format.format(min_value, max_value))
@@ -217,6 +217,9 @@ def dominantAttribute(df):
         consistency_level = levelOfConsistency(tmp_df)
         is_consistent = consistency_level == 1.0
         print(" = Dominant Attribute: Current consistency level = " + str(consistency_level))
+
+    if (not is_consistent):
+        raise(Exception(" ! Dominant Attribute Error: Failed to perform Dominant Attribute until consistency_level of 1.\n                             Try to increase floating point precision in generateDiscretizedValue function under str_format variable."))
 
     print("------------------------------------------")
     print(" = Dominant Attribute: Found cut points = {}".format(chosen_cut_points))
