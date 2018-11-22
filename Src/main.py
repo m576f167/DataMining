@@ -124,14 +124,14 @@ def run(input_file, output_file):
                 file_handler_output = open(output_file + "_certain_{}.disc".format(concept), "w")
                 file_handler_output.write("[ " + " ".join("{}".format(x) for x in df_certain.columns) + " ]\n")
                 file_handler_output.close()
-                df_certain.to_csv(output_file + ".disc", sep = " ", index = False, header = False, mode = "a")
+                df_certain.to_csv(output_file + "_certain_{}.disc".format(concept), sep = " ", index = False, header = False, mode = "a")
                 print("|========================================|")
                 print(" [#] Outputting Possible Rule Set")
                 # Print to file
                 file_handler_output = open(output_file + "_possible_{}.disc".format(concept), "w")
                 file_handler_output.write("[ " + " ".join("{}".format(x) for x in df_possible.columns) + " ]\n")
                 file_handler_output.close()
-                df_possible.to_csv(output_file + ".disc", sep = " ", index = False, header = False, mode = "a")
+                df_possible.to_csv(output_file + "_possible_{}.disc".format(concept), sep = " ", index = False, header = False, mode = "a")
     print("|[][][][][][][][][][][][][][][][][][][][]|")
     print("|[][][][][][][][][][][][][][][][][][][][]|")
     if ((is_discretized) and (is_consistent)):

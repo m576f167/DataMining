@@ -102,13 +102,12 @@ def LEM2(df, concept):
     total_element = len(local_covering)
     print("------------------------------------------")
     print(" = LEM2: Finding Maximum Local Covering")
-    if (total_element > 1):
-        while (i < total_element):
-            selected_pairs = local_covering.pop(i)
-            union_local_covering = reduce(np.union1d, [reduce(np.intersect1d, pairs.values()) for pairs in local_covering])
-            if np.array_equal(union_local_covering, decision_concept):
-                total_element = len(local_covering)
-            else:
-                local_covering.insert(i, selected_pairs)
-                i += 1
+    while ((total_element > 1) and (i < total_element)):
+        selected_pairs = local_covering.pop(i)
+        union_local_covering = reduce(np.union1d, [reduce(np.intersect1d, pairs.values()) for pairs in local_covering])
+        if np.array_equal(union_local_covering, decision_concept):
+            total_element = len(local_covering)
+        else:
+            local_covering.insert(i, selected_pairs)
+            i += 1
     return (local_covering, decision_concept)
