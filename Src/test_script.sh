@@ -8,3 +8,5 @@ python3 main.py -i ../Data/Test/iris.txt -o ../Result/Test/iris
 python3 main.py -i ../Data/Test/m-global.txt -o  ../Result/Test/m-global
 python3 main.py -i ../Data/Test/proj-1.txt -o ../Result/Test/proj-1
 python3 main.py -i ../Data/Test/wine.txt -o ../Result/Test/wine
+python3 main.py -i ../Data/Test/hw2.txt -o ../Result/Test/hw2
+python3 main.py -i ../Data/Test/hw3.txt -o ../Result/Test/hw3

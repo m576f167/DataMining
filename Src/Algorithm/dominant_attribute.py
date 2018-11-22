@@ -130,9 +130,6 @@ def computeConditionalEntropy(df, grouping_criteria):
             lambda x: np.sum(x)
         ).T.apply(lambda x: np.sum(x))
 
-    if not (list(conditional_entropy_each_group.index) == list(dict(df_grouped.groups).keys())):
-        print("Found")
-
     conditional_entropy = np.sum(-(num_each_group/num_total) * conditional_entropy_each_group)
     return (conditional_entropy)
 

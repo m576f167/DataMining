@@ -47,7 +47,7 @@ def levelOfConsistency(df):
     num_data = df.shape[0]
 
     df_attribute_duplicate = df[df.duplicated(attribute_colnames, keep = False)]
-    num_inconsistent = df_attribute_duplicate.groupby(attribute_colnames.tolist())[decision_colname].apply(lambda x: x.shape[0] if x.unique().shape[0] > 1 else 0).sum()
+    num_inconsistent = df_attribute_duplicate.groupby(attribute_colnames.tolist())[decision_colname].apply(lambda x: x.shape[0] if x.unique().shape[0] > 1 else 0).sum() if df_attribute_duplicate.shape[0] > 0 else 0
 
     return ((num_data - num_inconsistent)/num_data)
 
