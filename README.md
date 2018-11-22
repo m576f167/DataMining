@@ -68,5 +68,5 @@ The program generates several output files as follows:
 Note that I generate multiple discretized files in the case of inconsistent dataset. This is because when we generate lower approximation or upper approximation dataset corresponding
 to a concept, we replace the other values other than current concept with "SPECIAL_DECISION". This results in different values of decision column in different datasets (lower approximation
 or upper approximation corresponding to a concept). This may affect the level of consistency calculation when performing the dominant attribute algorithm. Thus, I always run dominant attribute
-algorithm per different dataset (lower and upper approximation corresponding to each concept) and output the resulting discretized datasets.
-
+algorithm per different dataset (lower and upper approximation corresponding to each concept) and output the resulting discretized datasets. Also note that I use the original decision values
+when writing these discretized datasets instead of replacing them with certain decision values or possible decision values
