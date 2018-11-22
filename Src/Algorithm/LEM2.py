@@ -95,7 +95,7 @@ def LEM2(df, concept):
             if ((num_pair == 0) or (not np.isin(reduce(np.intersect1d, selected_pairs.values()), decision_concept).all())):
                 selected_pairs[pair_key] = pair_value
         local_covering.append(selected_pairs)
-        union_local_covering = reduce(np.union1d, [reduce(np.intersect1d, selected_pairs.values()) for selected_pairs in local_covering])
+        union_local_covering = reduce(np.union1d, [reduce(np.intersect1d, pairs.values()) for pairs in local_covering])
         goal = [item for item in decision_concept if not np.isin(item, union_local_covering)]
         num_goal = len(goal)
     i = 0
@@ -105,7 +105,7 @@ def LEM2(df, concept):
     if (total_element > 1):
         while (i < total_element):
             selected_pairs = local_covering.pop(i)
-            union_local_covering = reduce(np.union1d, [reduce(np.intersect1d, selected_pairs.values()) for selected_pairs in local_covering])
+            union_local_covering = reduce(np.union1d, [reduce(np.intersect1d, pairs.values()) for pairs in local_covering])
             if np.array_equal(union_local_covering, decision_concept):
                 total_element = len(local_covering)
             else:

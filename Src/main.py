@@ -37,11 +37,6 @@ def runPipeline(df, concept, output_file):
         print("|========================================|")
         print(" [#] Running Dominant Attribute Algorithm")
         df = dominantAttribute(df)
-        # Print to file
-        file_handler_output = open(output_file + ".disc", "w")
-        file_handler_output.write("[ " + " ".join("{}".format(x) for x in df.columns) + " ]\n")
-        file_handler_output.close()
-        df.to_csv(output_file + ".disc", sep = " ", index = False, header = False, mode = "a")
     print("|========================================|")
     print(" [#] Running LEM2 Algorithm")
     rules, decision_concept = LEM2(df, concept)
@@ -80,6 +75,8 @@ def run(input_file, output_file):
     rule_info_certain = {}
     rule_info_possible = {}
     is_consistent = consistency_level == 1.0
+    attribute_colnames = df.columns[:-1]
+    is_discretized = True if (df[attribute_colnames].select_dtypes(include = "number").shape[1] > 0) else False
     for concept in concepts:
         if is_consistent:
             # Data set is consistent
@@ -97,31 +94,54 @@ def run(input_file, output_file):
             print("|++++++++++++++++++++++++++++++++++++++++|")
             print(" [@]=> Certain Rule Set for ({}, {})".format(decision_colname, concept))
             print("|++++++++++++++++++++++++++++++++++++++++|")
-            df, original_decision = lowerApproximation(df, concept)
-            rules, decision_concept, df = runPipeline(df, concept, output_file)
+            df_certain, original_decision = lowerApproximation(df.copy(), concept)
+            rules, decision_concept, df_certain = runPipeline(df_certain, concept, output_file)
             original_decision_concept = np.where(original_decision == concept)[0]
             print("|========================================|")
             print(" [#] Computing Rule Info")
             rules_info = [computeRuleInfo(rule, original_decision_concept) for rule in rules]
             rule_set_certain["({}, {})".format(decision_colname, concept)] = rules
             rule_info_certain["({}, {})".format(decision_colname, concept)] = rules_info
-            df[decision_colname] = original_decision
+            df_certain[decision_colname] = original_decision
 
             # Possible Rule Set
             print("|++++++++++++++++++++++++++++++++++++++++|")
             print(" [@]=> Possible Rule Set for ({}, {})".format(decision_colname, concept))
             print("|++++++++++++++++++++++++++++++++++++++++|")
-            df, original_decision = upperApproximation(df, concept)
-            rules, decision_concept, df = runPipeline(df, concept, output_file)
+            df_possible, original_decision = upperApproximation(df.copy(), concept)
+            rules, decision_concept, df_possible = runPipeline(df_possible, concept, output_file)
             original_decision_concept = np.where(original_decision == concept)[0]
             print("|========================================|")
             print(" [#] Computing Rule Info")
             rules_info = [computeRuleInfo(rule, original_decision_concept) for rule in rules]
             rule_set_possible["({}, {})".format(decision_colname, concept)] = rules
             rule_info_possible["({}, {})".format(decision_colname, concept)] = rules_info
-            df[decision_colname] = original_decision
+            df_possible[decision_colname] = original_decision
+            if (is_discretized):
+                print("|========================================|")
+                print(" [#] Outputting Certain Rule Set")
+                # Print to file
+                file_handler_output = open(output_file + "_certain_{}.disc".format(concept), "w")
+                file_handler_output.write("[ " + " ".join("{}".format(x) for x in df_certain.columns) + " ]\n")
+                file_handler_output.close()
+                df_certain.to_csv(output_file + ".disc", sep = " ", index = False, header = False, mode = "a")
+                print("|========================================|")
+                print(" [#] Outputting Possible Rule Set")
+                # Print to file
+                file_handler_output = open(output_file + "_possible_{}.disc".format(concept), "w")
+                file_handler_output.write("[ " + " ".join("{}".format(x) for x in df_possible.columns) + " ]\n")
+                file_handler_output.close()
+                df_possible.to_csv(output_file + ".disc", sep = " ", index = False, header = False, mode = "a")
     print("|[][][][][][][][][][][][][][][][][][][][]|")
     print("|[][][][][][][][][][][][][][][][][][][][]|")
+    if ((is_discretized) and (is_consistent)):
+        print("|========================================|")
+        print(" [#] Outputting Normal Rule Set")
+        # Print to file
+        file_handler_output = open(output_file + ".disc", "w")
+        file_handler_output.write("[ " + " ".join("{}".format(x) for x in df.columns) + " ]\n")
+        file_handler_output.close()
+        df.to_csv(output_file + ".disc", sep = " ", index = False, header = False, mode = "a")
     if is_consistent:
         # Write rule set normally
         print("|========================================|")
